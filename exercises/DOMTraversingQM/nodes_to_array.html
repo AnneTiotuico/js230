@@ -1,0 +1,222 @@
+<!-- 
+  Implement a function that converts the DOM, starting from the body, to nested arrays. Each element in the DOM is represented as ["PARENT_TAG_NAME", [children]] where children are elements as well and as such follow the same format. When an element has no children, it's represented as ["PARENT_TAG_NAME", []]. For instance, if the HTML doesn't have any elements inside the body, the result array would be: ["BODY", []]. Likewise, if the HTML only has a div element as its content, the result array would be: ["BODY", [["DIV", []]]].
+
+Go over the examples below to better visualize how the DOM is represented as nested arrays.
+ -->
+
+<!-- ex1 -->
+<!doctype html>
+<html>
+  <head>
+    <title>Nodes to Array</title>
+  </head>
+  <body>
+    <header id="1"></header>
+    <main id="2"></main>
+    <footer id="3"></footer>
+  </body>
+</html>
+
+<!-- 
+  ex1 output
+  > nodesToArr();
+= ["BODY",[["HEADER",[]],["MAIN",[]],["FOOTER",[]]]]
+
+// OR
+
+= ["BODY", [
+    ["HEADER", []],
+    ["MAIN", []],
+    ["FOOTER", []]]]
+ -->
+
+ <!-- ex2 -->
+ <!doctype html>
+ <html>
+   <head>
+     <title>Nodes to Array</title>
+   </head>
+   <body>
+     <header id="1"></header>
+     <main id="2">
+       <div></div>
+       <div></div>
+     </main>
+     <footer id="3"></footer>
+   </body>
+ </html>
+
+ <!-- 
+   ex2 output 
+  > nodesToArr();
+= ["BODY",[["HEADER",[]],["MAIN",[["DIV",[]],["DIV",[]]]],["FOOTER",[]]]]
+
+// OR
+
+= ["BODY", [
+    ["HEADER", []],
+    ["MAIN", [
+      ["DIV", []],
+      ["DIV", []]]],
+    ["FOOTER",[]]]]
+  -->
+
+  <!-- ex3 -->
+  <!doctype html>
+  <html>
+    <head>
+      <title>Nodes to Array</title>
+    </head>
+    <body>
+      <div id="1">
+        <div id="4"></div>
+        <div id="5">
+          <div id="6"></div>
+        </div>
+      </div>
+      <div id="2"></div>
+      <div id="3">
+        <div id="7"></div>
+        <div id="8"></div>
+        <div id="9"></div>
+      </div>
+    </body>
+  </html>
+
+  <!-- 
+    ex3 output
+    > nodesToArr();
+= ["BODY",[["DIV",[["DIV",[]],["DIV",[["DIV",[]]]]]],["DIV",[]],["DIV",[["DIV",[]],["DIV",[]],["DIV",[]]]]]]
+
+// OR
+
+= ["BODY", [
+    ["DIV", [
+      ["DIV", []],
+      ["DIV", [
+        ["DIV",[]]]]]],
+    ["DIV", []],
+    ["DIV", [
+      ["DIV", []],
+      ["DIV", []],
+      ["DIV", []]]]]]
+   -->
+
+<!-- 
+  my answer:
+  function nodesToArr() {
+  let start = document.body;
+  let result = [start.tagName, [...start.children]];
+  let currentArr = result[1];
+  let hasChildren = currentArr.some(el => el.children > 0);
+
+  while (hasChildren) {
+    currentArr = currentArr.map(el => [el.tagName, [...el.children]]);
+  }
+
+  result[1] = currentArr.map(child => [child.tagName, []]);
+
+  return result;
+}
+
+// doesn't get the body tag:
+function nodesToArr(start = document.body) {
+  if (start.tagName === 'BODY' && start.children.length === 0) {
+    return ['BODY', []];
+  } else {
+    let children = [...start.children];
+    return (children.map(child => [child.tagName, nodesToArr(child)]))
+  }
+}
+
+//working:
+function nodesToArr(start = document.body) {
+  let children = [...start.children];
+  if (start.tagName === 'BODY') {
+    return ['BODY', children.map(child => [child.tagName, nodesToArr(child)])]
+  } else {
+    return children.map(child => [child.tagName, nodesToArr(child)]);
+  }
+}
+//refactored:
+function nodesToArr(start = document.body) {
+  let children = [...start.children].map(child => [child.tagName, nodesToArr(child)]);
+  if (start.tagName === 'BODY') {
+    return ['BODY', children]
+  } else {
+    return children;
+  }
+}
+
+//refactored to ternary:
+function nodesToArr(start = document.body) {
+  let children = [...start.children].map(child => [child.tagName, nodesToArr(child)]);
+  return (start.tagName === 'BODY') ? ['BODY', children] : children;
+}
+ -->
+
+ <!-- 
+   LS mental model:
+A possible mental model for this problem is to iteratively get the children of parent elements until there are no parent elements with children. This leads to a deeper nesting as there are more children elements that are parents. Here's a high level algorithm that can go with this mental model:
+
+Check if the parent element has children.
+If the parent element has children set the value of the children array to it ([parentElement, [children]]), otherwise, set it to an empty array ([parentElement, []]).
+Check if any of the children are parents.
+If there are parents, repeat the process from step 1.
+
+LS Solution:
+function nodesToArr() {
+  const nodesArray = ['BODY', formatNodes(Array.prototype.slice.call(document.body.children))];
+  let currentParentNodes = nodesArray[1];
+
+  while (anyChildren(currentParentNodes)) {
+    currentParentNodes = getNextGenerationParents(currentParentNodes);
+  }
+
+  getNextGenerationParents(currentParentNodes);
+
+  return nodesArray;
+}
+
+function getNextGenerationParents(currentParentNodes) {
+  let newParentNodes = [];
+  currentParentNodes.forEach((parentNode, index, parentNodes) => {
+    parentNodes[index] = appendChildren(parentNode);
+    if (parentNodes[index][1].length > 0) {
+      newParentNodes = newParentNodes.concat(parentNodes[index][1]);
+    }
+  });
+
+  return newParentNodes;
+}
+
+function anyChildren(parentNodes) {
+  for (let i = 0; i < parentNodes.length; i += 1) {
+    if (parentNodes[i][0].children.length > 0) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function appendChildren(parentNode) {
+  const children = formatNodes(Array.prototype.slice.call(parentNode[0].children));
+  parentNode[0] = parentNode[0].tagName;
+  parentNode.push(children);
+  return parentNode;
+}
+
+function formatNodes(nodes) {
+  return nodes.map(node => [node]);
+}
+
+Discussion
+The problem is straightforward; we just need to keep getting the children of parent elements until there are no parent elements with children. The challenge is how to go about the iteration and how to build the nested array.
+
+The solution addresses the challenge by using "mutation." It leverages the fact that arrays are mutable by creating a copy of the potential parent element as an array using the formatNodes function in another array (currentParentNodes). It can then iteratively loop and check if any of the currentParentNodes have children. If they do, the parent elements are mutated by appending the respective children to it. This mutation is also reflected by the nodesArray; each mutation on the children leads to an increase in the nesting.
+
+One thing to note with the solution is that there is a call to getNextGenerationParents after the while loop. This is done so that the inner most elements are properly formatted as ["PARENT_TAG_NAME", []].
+
+
+  -->

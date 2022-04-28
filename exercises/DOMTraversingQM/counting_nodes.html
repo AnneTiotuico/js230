@@ -1,0 +1,45 @@
+<!-- Go over the two HTML snippets. How many nodes will the resulting DOM tree have? -->
+
+<div>
+  <p>Then press the <em>Draw</em> button</p> 
+</div>
+
+<!-- the above will have 11 nodes: html, head, body, div, empty #text, p, empty #text, #text, em, #text, and #text -->
+
+<div><p>Then press the <em>Draw</em> button.</p></div>
+<!-- the above will have 9 nodes: html, head, body, div, p, #text, em, #text and #text -->
+
+<!-- 
+LS Solution:
+Visually, when the browser renders the HTML, there is no difference. However, if you were to look at the DOM created from the HTML, there are nuances that might become a factor when querying and manipulating it. Here are a couple of ways you can test both of these DOM trees.
+
+> document.querySelector('div').firstChild;
+> document.querySelector('div').textContent;
+
+Running the above code for both HTML snippets yields the following results:
+<div>
+  <p>Then press the <em>Draw</em> button</p>
+</div>
+
+> document.querySelector('div').firstChild;
+= #text
+
+> document.querySelector('div').textContent;
+= "
+       Then press the Draw button
+     "
+
+<div><p>Then press the <em>Draw</em> button</p></div>
+
+> document.querySelector('div').firstChild;
+= <p>
+    "Then press the "
+    <em>Draw</em>
+    " button"
+  </p>
+
+
+> document.querySelector('div').textContent;
+= "Then press the Draw button"
+
+ -->

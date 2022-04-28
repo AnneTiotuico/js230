@@ -1,0 +1,120 @@
+<!-- 
+This is a challenging exercise. You may opt not work on it. We will not have problems of this level of difficulty in the exams.
+
+The challenge is mainly because of the logic/mental model for it can be tough to visualize right away. Once you've got a mental model the code isn't long and complex.
+ -->
+
+ <!-- 
+Implement a function that converts a nested array of nodeNames (see Nodes to Array exercise for examples) to nodes. Go over the sample code and the corresponing return values below as a guide for what you will implement.
+  -->
+
+<!-- ex1 
+// Nested array of nodes
+const nodes = ["BODY",[["HEADER",[]],["MAIN",[]],["FOOTER",[]]]];
+
+// OR
+//
+// ["BODY", [
+//   ["HEADER", []],
+//   ["MAIN", []],
+//   ["FOOTER", []]]]
+
+arrayToNodes(nodes);
+-->
+
+<!-- ex1 return value -->
+<body>
+  <header></header>
+  <main></main>
+  <footer></footer>
+</body>
+
+
+<!-- ex 2
+// Nested array of nodes
+const nodes = ["BODY",[["DIV",[["DIV",[]],["DIV",[["DIV",[]]]]]],["DIV",[]],["DIV",[["DIV",[]],["DIV",[]],["DIV",[]]]]]];
+
+// OR
+//
+// ["BODY", [
+//   ["DIV", [
+//     ["DIV", []],
+//     ["DIV", [
+//       ["DIV",[]]]]]],
+//   ["DIV", []],
+//   ["DIV", [
+//     ["DIV", []],
+//     ["DIV", []],
+//     ["DIV", []]]]]]
+
+arrayToNodes(nodes);
+-->
+
+<!-- ex2 return value -->
+
+<body>
+  <div>
+    <div></div>
+    <div>
+      <div></div>
+    </div>
+  </div>
+  <div></div>
+  <div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</body>
+
+<!-- 
+  my answer:
+  function arrayToNodes(nodes) {
+  let parent = document.createElement(nodes[0]);
+  let children = nodes[1];
+  if (children.length < 1) {
+    return parent;
+  } else {
+    children.forEach(child => {
+      parent.append(arrayToNodes(child))
+    })
+  }
+  return parent;
+}
+
+/*
+iterate through nodes
+if item is a string, create a element using that tagname
+and set parent to that created element
+if item is an array, append to the parent and call arrayToNodes with that array and repeat
+*/
+
+// refactored:
+function arrayToNodes(nodes) {
+  let parent = document.createElement(nodes[0]);
+  nodes[1].forEach(child => parent.append(arrayToNodes(child)));
+  return parent;
+}
+ -->
+
+
+ <!-- 
+  LS Solution:
+function arrayToNodes(nodes) {
+  const parent = document.createElement(nodes[0]);
+  const children = nodes[1];
+
+  if (children.length === 0) {
+    return parent;
+  } else {
+    for (let i = 0; i < children.length; i += 1) {
+      parent.appendChild(arrayToNodes(children[i]));
+    }
+  }
+
+  return parent;
+}
+
+Discussion
+The solution uses a recursive approach since there is a good fit going with the nested structure of the nodes. The challenge with any recursive approach is thinking about the base/stopping condition and the process towards getting to the base case. For this problem, the "base case" is when a parent has no children and the "working towards the base case" is the process of successively — via recursive calls to arrayToNodes — converting an array to nodes by creating an element from the parent node.
+  -->

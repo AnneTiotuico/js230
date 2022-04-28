@@ -1,0 +1,182 @@
+<!-- 
+Implement a function, sliceTree, that is "similar" to the Array.prototype.slice method, but this time for a DOM tree. The sliceTree function takes two arguments: the start index which is the parent node's id attribute and, the end index which is the innermost child node's id attribute. The function returns an array of tagNames. Take note of the following when implementing the sliceTree function:
+
+It's similar to slice but different in the sense that slice isn't inclusive on the right hand side.
+The end index doesn't have to be the id of the "innermost" child node as some of the examples suggest.
+Only consider element nodes.
+Only elements that have body as an ancestor (parent, grandparent, etc.) are sliceable.
+If the id attribute of the start or end index is not in the DOM, return undefined.
+If the slice is not feasible — there's no path connecting the element at the starting index to the ending index — return undefined.
+
+ -->
+
+ <!doctype html>
+<html>
+  <head>
+    <title>Tree Slicing</title>
+  </head>
+  <body>
+    <article id="1">1
+      <header id="2">2
+        <span id="3">3
+          <a href="#" id="4">4</a>
+        </span>
+      </header>
+      <main id="5">5
+        <section id="6">6
+          <p id="7">7
+            <span id="8">8
+              <strong id="9">9
+                <a href="#" id="10">10</a>
+              </strong>
+            </span>
+          </p>
+        </section>
+        <section id="11">11
+          <p id="12">12
+            <span id="13">13
+              <strong id="14">14
+                <a href="#" id="15">15</a>
+              </strong>
+            </span>
+          </p>
+          <p id="16">16
+            <span id="17">17
+              <strong id="18">18
+                <a href="#" id="19">19</a>
+              </strong>
+            </span>
+            <span id="20">20
+              <strong id="21">21
+                <a href="#" id="22">22</a>
+              </strong>
+            </span>
+          </p>
+        </section>
+      </main>
+      <footer id="23">23
+        <p id="24">24</p>
+      </footer>
+    </article>
+  </body>
+</html>
+
+<!-- 
+> sliceTree(1, 4);
+= ["ARTICLE", "HEADER", "SPAN", "A"]
+> sliceTree(1, 76);
+= undefined
+> sliceTree(2, 5);
+= undefined
+> sliceTree(5, 4);
+= undefined
+> sliceTree(1, 23);
+= ["ARTICLE", "FOOTER"]
+> sliceTree(1, 22);
+= ["ARTICLE", "MAIN", "SECTION", "P", "SPAN", "STRONG", "A"]
+> sliceTree(11, 19);
+= ["SECTION", "P", "SPAN", "STRONG", "A"] 
+-->
+
+<!-- 
+problem: 
+create a function `sliceTree` that is similiar to Array.prototype.slice, but for DOM tree nodes
+- it takes 2 args, starting index which is the parent node's id, and end index which is the inner most child node's id attribute
+- returns an array of tagNames
+
+rules:
+- includes the end index
+- the end index doesnt have to be innermost child
+- only include element nodes (not text nodes)
+- only elements within the body tag are sliceable
+- if either of the given args aren't in the DOM, return undefined
+- if no path connecting the start and end index, return undefined
+
+examples:
+> sliceTree(1, 4);
+= ["ARTICLE", "HEADER", "SPAN", "A"]
+// starts at grandest parent (article) and goes to each descendant until it sees id 4 which is a
+
+> sliceTree(1, 76);
+= undefined
+// id's only go up to 24
+
+> sliceTree(2, 5);
+= undefined
+// no path connecting the indexes
+
+> sliceTree(5, 4);
+= undefined
+// no path connecting the indexes
+
+> sliceTree(1, 23);
+= ["ARTICLE", "FOOTER"]
+//
+
+> sliceTree(1, 22);
+= ["ARTICLE", "MAIN", "SECTION", "P", "SPAN", "STRONG", "A"]
+///
+
+> sliceTree(11, 19);
+= ["SECTION", "P", "SPAN", "STRONG", "A"]
+
+data structures:
+numbers, strings, elements, arrays
+
+algorithm:
+if the start or end isn't within 1-24, return undefined
+if end isn't a descendant of start, return undefined
+
+get the end element, add its name to the array
+get the parent and add its name to the array
+keep going until the parent is article's parent
+
+ -->
+
+ <!-- 
+my answer:
+function sliceTree(start, end) {
+  let tagNames = [];
+  let parentEl = document.getElementById(String(start));
+  let childEl = document.getElementById(String(end))
+
+  if (!parentEl || !childEl || !parentEl.contains(childEl)) {
+    return undefined;
+  }
+  
+  while (childEl !== parentEl.parentElement) {
+    tagNames.unshift(childEl.tagName);
+    childEl = childEl.parentElement;
+  }
+
+  return tagNames;
+}
+
+  -->
+
+  <!-- 
+    LS Solution:
+function sliceTree(start, end) {
+  let endElement = document.getElementById(end);
+  const startElement = document.getElementById(start);
+
+  if (!startElement || !endElement) {
+    return undefined;
+  }
+
+  const slicedTree = [];
+  let currentElement;
+
+  do {
+    currentElement = endElement;
+    slicedTree.unshift(currentElement.tagName);
+    endElement = endElement.parentNode;
+  } while (currentElement.id !== String(start) && endElement.tagName !== 'BODY');
+
+  return (endElement.tagName === 'BODY' && currentElement.id !== String(start) ? undefined : slicedTree);
+}
+
+There are a couple of things worth noting in this problem. First, it is difficult to build the slice of the DOM tree starting from the start since there is the possibility that an element branches off to many child elements. When this happens, you have to check each branch for the existence of the element with the specified end. Working from end is easier, since an element will always have only one Node.parentNode.
+
+Another tricky thing here is the scenario wherein a slice is not possible given the combination of start and end. The catch here is to detect when you've already reached the body element and you haven't gotten an element that matches the id attribute of the start. When that happens, it means that the combination isn't possible and sliceTree returns undefined.
+   -->
