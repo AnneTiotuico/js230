@@ -5,7 +5,7 @@ function startCounting() {
   return setInterval(() => { 
     console.log(count); 
     count += 1;
-  }, count * 1000);
+  }, 1000);
 }
 
 let id = startCounting();
