@@ -14,25 +14,13 @@
 
 
 
-// function delayLog() {
-//   for (let count = 1; count <= 10; count++) {
-//     setTimeout(() => { console.log(count) }, count * 1000);
-//   }
-// }
-
-// delayLog();
-
-
-// using bind
 function delayLog() {
   for (let count = 1; count <= 10; count++) {
-    setTimeout((() => { console.log(count) }).bind(count), count * 1000);
+    setTimeout(() => { console.log(count) }, count * 1000);
   }
 }
 
 delayLog();
-
-
 
 // LS Student answer using 3rd arg
 // function delayLog() {
