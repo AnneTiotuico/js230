@@ -1,0 +1,73 @@
+<!-- 
+  My guess:
+  the event listener with target will fire first since the user clicks on the yellow box (4) and main is alerted, then the currentTarget event listener fires since the event listener is attached to elem 1 which is the target and it alerts div
+ -->
+
+ <!-- 
+   LS Solution:
+    1. The click event listener listening on the bubbling phase that alerts the tagName of the target element listening on the div element (the first event handler).
+    2. The click event listener listening on the bubbling phase that alerts the tagName of the currentTarget element listening on the div element (the second event handler).
+
+    It is interesting to note that adding an event listener of the same type — "click" — to the same element doesn't overwrite the first one that was added.
+  -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    #elem1 {
+      background-color: green;
+      position: relative;
+      width: 200px;
+      height: 200px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #elem2 {
+      background-color: blue;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 150px;
+      height: 150px;
+    }
+
+    #elem3 {
+      background-color: red;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 100px;
+      height: 100px;
+      line-height: 25px;
+    }
+
+    #elem4 {
+      background-color: yellow;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+    }
+  </style>
+  <script>
+    let elem1 = document.querySelector('#elem1');
+
+    elem1.addEventListener('click', event => alert(event.target.tagName));
+    elem1.addEventListener('click', event => alert(event.currentTarget.tagName));
+  </script>
+</head>
+<body>
+  <div id="elem1">1
+    <section id="elem2">2
+      <article id="elem3">3
+        <main id="elem4">4
+        </main>
+      </article>
+    </section>
+  </div>
+</body>
+</html>
