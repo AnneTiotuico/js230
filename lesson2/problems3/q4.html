@@ -1,0 +1,62 @@
+<!-- 
+  Using the following code, write some JavaScript to add a character counter that updates as the user types.
+
+  Note how the text turns red when you have more than 140 characters in the text box.
+ -->
+
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <style>
+    .composer {
+      background: #f5f5f5;
+      padding:  1em;
+      width:  30em;
+    }
+
+    .composer textarea {
+      width: 100%;
+      height: 4em;
+    }
+
+    .composer textarea.invalid {
+      color: red;
+    }
+   </style>
+   <script>
+     document.addEventListener('DOMContentLoaded', event => {
+      let composer = document.querySelector('.composer');
+      let p = document.querySelector('.counter');
+      let textarea = document.querySelector('.composer textarea');
+      let button = document.querySelector('button');
+      let chars = 140;
+      let currentChars;
+
+      p.textContent = `${chars} characters remaining`; 
+      
+      composer.addEventListener('keyup', event => {
+        let remainingChars = chars - textarea.value.length;
+        p.textContent = `${remainingChars} characters remaining`; 
+        if (remainingChars < 0) {
+          textarea.classList.add('invalid');
+          button.disabled = true;
+        } else {
+          textarea.classList.remove('invalid');
+          button.disabled = false;
+        }
+      });
+      
+     });
+     
+
+     
+   </script>
+ </head>
+ <body>
+  <div class="composer">
+    <textarea placeholder="Enter your message"></textarea>
+    <p class="counter"></p>
+    <button type="submit">Post Message</button>
+  </div>
+ </body>
+ </html>

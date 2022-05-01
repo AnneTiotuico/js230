@@ -1,0 +1,105 @@
+<!-- 
+  Update your solution to the previous problem to change the color of the red X to blue when the user presses the b key, green in response to the g key, and red in response to r. The X should continue to follow the mouse around.
+
+  You have to click on the result box (the white area) before you type any keys. Otherwise, the keystrokes go to whatever window or subwindow has the keyboard focus.
+
+  If the result box isn't showing, click on the result tab first.
+ -->
+
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <style>
+     .x {
+       position: absolute;
+       transform: rotate(45deg);
+       top: 20px;
+       left: 20px;
+     }
+ 
+     .x .horizontal {
+       width: 45px;
+       height: 5px;
+       position: absolute;
+       left: -20px;
+       background: red;
+     }
+ 
+     .x .vertical {
+       height: 45px;
+       width: 5px;
+       background: red;
+       position: absolute;
+       left: 0px;
+       top: -20px;
+     } 
+   </style>
+   <script>
+     document.addEventListener('mousemove', event => {
+       let horizontalPos = event.clientX;
+       let verticalPos = event.clientY;
+       let xSymbol = document.querySelector('.x');
+       xSymbol.style.top = `${verticalPos}px`;
+       xSymbol.style.left = `${horizontalPos}px`;
+     });
+
+    document.addEventListener('keydown', event => {
+      let horiz = document.querySelector('.x .horizontal');
+      let vert = document.querySelector('.x .vertical');
+      let color;
+      
+      switch (event.key) {
+        case 'b':
+          color = 'blue';
+          break;
+        case 'g':
+          color = 'green';
+          break;
+        case 'r':
+          color = 'red';
+          break;
+      }
+
+      horiz.style.background = color;
+      vert.style.background = color;
+    });
+   </script>
+ </head>
+ <body>
+   <div class="x">
+     <div class="horizontal"></div>
+     <div class="vertical"></div>
+   </div> 
+ </body>
+ </html>
+
+ <!-- 
+   LS Solution:
+
+document.addEventListener('mousemove', event => {
+  let x = document.querySelector('.x');
+  x.style.left = event.clientX.toString() + 'px';
+  x.style.top = event.clientY.toString() + 'px';
+});
+
+document.addEventListener('keyup', event => {
+  let key = event.key;
+  let color;
+
+  if (key === 'r') {
+    color = 'red';
+  } else if (key === 'g') {
+    color = 'green';
+  } else if (key === 'b') {
+    color = 'blue';
+  }
+
+  if (color) {
+    let x = document.querySelector('.x');
+    for (let index = 0; index < x.children.length; index += 1) {
+      var child = x.children[index];
+      child.style.background = color;
+    }
+  }
+});
+  -->
