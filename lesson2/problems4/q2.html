@@ -1,0 +1,95 @@
+<!-- 
+Study the example below.
+
+Can you predict what happens when you click on "4"?
+If we add the following line of code, what will happen?
+document.querySelector('.d3').addEventListener('click', highlightThis, false);
+ -->
+ <!-- 
+   Can you predict what happens when you click on "4"?
+   My guess: 
+   it will alert and say d1 then d2 then d4
+
+   If we add the following line of code, what will happen?
+   document.querySelector('.d3').addEventListener('click', highlightThis, false);
+   My guess:
+   it will still alert and say d1 then d2 then d4 but then d3 will alert last since it is captured during the dubbling phase (when its going back up)
+   
+  -->
+
+  <!-- 
+    LS Solution:
+    We'll see alerts for the d1, d2 and d4 boxes, in that sequence, but none for the d3 box since we don't have an event listener for it.
+    
+    The new event handler on d3 fires last since we defined it on the bubbling phase.
+   -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    .d1 {
+      background-color: green;
+      position: relative;
+      width: 200px;
+      height: 200px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .d2 {
+      background-color: blue;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 150px;
+      height: 150px;
+    }
+
+    .d3 {
+      background-color: red;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 100px;
+      height: 100px;
+      line-height: 25px;
+    }
+
+    .d4 {
+      background-color: yellow;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', event => {
+      document.querySelector('.d3').addEventListener('click', highlightThis, false);
+      let divs = document.querySelectorAll('.pick');
+
+      for(let index = 0; index < divs.length; index += 1) {
+        divs[index].addEventListener('click', highlightThis, true);
+      }
+          
+      function highlightThis(e) {
+        alert(`${this.className} ${e.currentTarget.tagName}`);
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="d1 pick">1
+    <main class="d2 pick">2
+      <div class="d3">3
+        <section class="d4 pick">4
+        </section>
+      </div>  
+    </main>
+  </div>
+</body>
+</html>
+

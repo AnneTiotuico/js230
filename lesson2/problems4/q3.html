@@ -1,0 +1,89 @@
+<!-- 
+  Check out the HTML structure and the JavaScript code. How many alert boxes do you think will fire when the yellow box is clicked? Why?
+ -->
+
+<!-- 
+  My guess:
+  2 alert boxes will appear since only the yellow box element has an event listener and only one of its parents elem1 has the event listener, and elem0 isn't in its hierarchy
+  it will first alert elem1 then elem4 
+ -->
+
+<!-- LS Solution:
+There will only be 2 alert boxes when the yellow box is clicked. It only "visually" looks like the orange box is a parent of the yellow box.
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    #elem0 {
+      width: 250px;
+      height: 250px;
+      position: absolute;
+      background-color: orange;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #elem1 {
+      background-color: green;
+      position: relative;
+      top: 25px;
+      left: 25px;
+      width: 200px;
+      height: 200px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    #elem2 {
+      background-color: blue;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 150px;
+      height: 150px;
+    }
+
+    #elem3 {
+      background-color: red;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 100px;
+      height: 100px;
+      line-height: 25px;
+    }
+
+    #elem4 {
+      background-color: yellow;
+      position: absolute;
+      top: 25px;
+      left: 25px;
+      width: 50px;
+      height: 50px;
+      line-height: 50px;
+    }
+  </style>
+  <script>
+    let elem0 = document.querySelector('#elem0');
+    let elem1 = document.querySelector('#elem1');
+    let elem4 = document.querySelector('#elem4');
+
+    elem0.addEventListener('click', event => alert(event.currentTarget.id));
+    elem1.addEventListener('click', event => alert(event.currentTarget.id), true);
+    elem4.addEventListener('click', event => alert(event.currentTarget.id));
+  </script>
+</head>
+<body>
+  <div id="elem0">0</div>
+  <div id="elem1">1
+    <div id="elem2">2
+      <div id="elem3">3
+        <div id="elem4">4
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
