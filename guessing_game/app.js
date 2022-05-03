@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.querySelector('a').addEventListener('click', event => {
+    let form = document.querySelector('form');
+    form.reset();
     answer = generateNewRandNum();
     setStartMessage();
   });
