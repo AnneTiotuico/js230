@@ -148,3 +148,68 @@ tracker.list().length
     </script>
   </body>
 </html>
+
+<!-- 
+  LS Solution:
+  const divRed = document.querySelector('#red');
+  const divBlue = document.querySelector('#blue');
+  const divOrange = document.querySelector('#orange');
+  const divGreen = document.querySelector('#green');
+
+  const tracker = (() => {
+    const events = [];
+    return {
+      list() {
+        return events.slice();
+      },
+      elements() {
+        return this.list().map(({target}) => target);
+      },
+      add(event) {
+        events.push(event);
+      },
+      clear() {
+        events.length = 0;
+        return events.length;
+      },
+    };
+  })();
+
+  function track(callback) {
+    function isEventTracked(events, event) {
+      return events.includes(event);
+    }
+
+    return event => {
+      if (!isEventTracked(tracker.list(), event)) {
+        tracker.add(event);
+      }
+
+      callback(event);
+    };
+  }
+
+  divRed.addEventListener('click', track(event => {
+    document.body.style.background = 'red';
+  }));
+
+  divBlue.addEventListener('click', track(event => {
+    event.stopPropagation();
+    document.body.style.background = 'blue';
+  }));
+
+  divOrange.addEventListener('click', track(event => {
+    document.body.style.background = 'orange';
+  }));
+
+  divGreen.addEventListener('click', track(event => {
+    document.body.style.background = 'green';
+  }));
+
+
+The notable part of this solution is the highlighted code. First, we define tracker object that has a private events array and several methods. The list method makes the latter part of the scenario possible. It prevents you from directly manipulating the array of events.
+
+Another aspect worth looking at is the track function. It takes a callback function as an argument and returns a function that, when executed, invokes the callback. What's noteworthy here is the private function, isEventTracked. The function determines whether an event is tracked already. If it isn't tracked, it tracks it.
+
+That said, it's worth emphasizing why the number of events tracked is 4 (expected return value of tracker.list().length) even though divBlue's callback function executed event.stopPropagation(); though the event did not propagate, it still fired.
+ -->
