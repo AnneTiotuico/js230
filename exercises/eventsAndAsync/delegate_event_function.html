@@ -1,0 +1,198 @@
+<!-- 
+Implement a function named delegateEvent that delegates events to the descendant (inner) elements of a parent element that match a given selector. The function takes four arguments: parentElement, selector, eventType, and callback. It returns true if it was able to add an event listener and undefined if it wasn't. For example, if the parentElement is section and selector is p, the function should delegate events of eventType on the p element within section to the function callback; consequently, the function returns true.
+
+Assume that all event handlers listen during the bubbling phase.
+
+Problem: 
+- create a function named `delegateEvent` that delegates events to the descendant (inner) elements of a parent element that match a given selector; it takes 4 args, `parentElement`, `selector`,
+`eventType`, and `callback`; it returns true if it was able to add an event listener and `undefined`
+if it wasn't
+
+input: a parentElement (HTML Element), a selector (string), an eventType (string) and a callback Function
+output: a boolean or undefined; true if it was able to add an event listener, undefined if it wasn't
+
+rules:
+- assume all event handlers listen during bubbling phase (on the way back up, so the inner elements will call the event handler first)
+- only the descendants that match the selector and are children of parent should trigger the callback; clicking anywhere else shouldn't trigger the callback
+
+examples:
+- for ex, if the `parentElement` is `section` and `selector` is `p`, the function should delegate events of `eventType` on the `p` element within `section` to the function `callback`; the function should then return `true`
+
+Notes on the scenarios:
+Each scenario is independent of the others.
+Assume that delegateEvent runs before the described scenario occurs.
+
+// Possible elements for use with the scenarios
+const element1 = document.querySelector('table');
+const element2 = document.querySelector('main h1');
+const element3 = document.querySelector('main');
+
+// Possible callback for use with the scenarios
+const callback = ({target, currentTarget}) => {
+  alert(`Target: ${target.tagName}\nCurrent Target: ${currentTarget.tagName}`);
+};
+
+Scenario 1
+- delegateEvent(element1, 'p', 'click', callback);
+- returns `undefined`; doesn't add an event listener to any elements
+  ? this returns `undefined` because `element1` will return `null` since we don't have a `table` tag
+
+Scenario 2
+- delegateEvent(element2, 'p', 'click', callback);
+- returns `true`; adds a `click` event listener to `element2`
+  if you click anywhere on the page, the `callback` func does not trigger
+    ? this can't delegate to `p` since it isn't descendant of `element2`
+
+Scenario 3
+- delegateEvent(element2, 'h1', 'click', callback);
+- returns `true`; adds `click` event listener to `element2`
+  if you click anywhere on page, the `callback` func doesn't trigger
+    ? this can't delegate to `p` since it isn't descendant of `element2`; 
+    it is element 2 itself
+
+Scenario 4
+- delegateEvent(element3, 'h1', 'click', callback);
+- returns `true`; adds `click` to `element3`; if you click h1 that contains the text
+  'Header', the `callback` func should trigger and display an alert msg;
+  for ex 'Target: H1\nCurrent Target: MAIN'
+  clicking anywhere else won't trigger the `callback`
+    ? works correctly since `element3` exists in the DOM and `h1` is a descendant of `element3`
+
+Scenario 5
+- delegateEvent(element3, 'aside p', 'click', callback);
+- returns `true`; adds `click` to `element3`; if you click a `p` element
+  that is a descendant of `aside` element inside `main`, the `callback` function should trigger and display an alert msg 
+    -for ex: 'Target: P\nCurrent Target: MAIN'
+  if you click anywhere else, won't trigger the `callback`
+    ? works correcntly because `aside p` is a child of `element3` and `aside p` is a valid selector
+    - clicking note 1 or note 2 should trigger the event
+
+Scenario 6
+- delegateEvent(element2, 'p', 'click', callback);
+- returns `true`; adds `click` to `element2`; if you click anywhere on the page, the `callback` function doesn't trigger
+run this code:
+const newP = document.createElement('P');
+const newContent = document.createTextNode('New Paragraph');
+newP.appendChild(newContent);
+
+element2.appendChild(newP);
+
+- If you click the `p` element that contains the text "New Paragraph", the `callback` function should trigger and display an alert message, e.g., 'Target: P\nCurrent Target: H1'.
+If you click anywhere else, the `callback` function does not trigger.
+    ? this is initially the same scenario as scenario2 where `p` is not a child of `element2` so it cannot trigger the `callback`
+    but running the above code adds a `p` as a child to `main h1`, therefore that `p` will now trigger the `callback` when the text of the `p` is clicked
+
+
+data structures:
+html elements, strings
+
+algorithm:
+- create a function `delegateEvent` 
+  - take 4 args, a parentEl, selector, eventType, and callback function
+  - return true if an event listener was added (to the parent)
+  - return undefined if it didn't add an event listener (the parent doesn't exist/is null/isn't an HTMLElement)
+
+- check if `parent` is a valid HTMLElement
+  - return `undefined` if not
+  - else if valid: add the `eventType` event listener to `parent` then
+    return `true`
+
+- if `parent` is a valid HTMLElement, check if selector is a valid selector that returns an HTMLElement in the DOM and check if it is
+a descendant of `parent`
+  - if no, don't do anything
+  - if yes, make sure the `callback` function only triggers for elements that match the `selector` and are children of `parent`
+
+
+- if selector contains a space
+  - split them into an array and check if arr[1] is child of arr[0]
+    and check if arr[0] is child of parentElement
+
+Use this markup and the following scenarios to test your implementation:
+ -->
+
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <title>Event Delegation Function</title>
+  </head>
+  <body>
+    <main>
+      <section>
+        <h1>Header</h1>
+        <p>Content</p>
+      </section>
+      <aside>
+        <h2>Sub Side Notes</h2>
+        <p>Note 1</p>
+        <p>Note 2</p>
+      </aside>
+    </main>
+    <nav>
+      <p>Side Note</p>
+    </nav>
+    <script>
+      const isDescendant = (parent, elem) => {
+        return parent.contains(elem) && parent !== elem;
+      };
+
+      const validSelector = (event, parent, selector) => {
+        if (selector.includes(' ')) {
+          let [subParentName, childName] = selector.split(' ');
+          let subParent = document.querySelector(subParentName);
+          let child = document.querySelector(selector);
+          if (isDescendant(subParent, child) && isDescendant(parent, subParent)) {
+            selector = child.tagName;
+          } 
+          return event.target.tagName === selector.toUpperCase() &&
+              isDescendant(subParent, event.target);
+        }
+        return event.target.tagName === selector.toUpperCase();
+      }
+
+      const delegateEvent = (parentElement, selector, eventType, callback) => {
+        if (!(parentElement instanceof HTMLElement)) {
+          return undefined;
+        } else {
+          parentElement.addEventListener(`${eventType}`, (event) => {
+            let child = event.target;
+            if (isDescendant(parentElement, child) &&
+                validSelector(event, parentElement, selector)) {
+              callback(event);
+            }
+          });
+          return true;
+        }
+      };
+
+      const element1 = document.querySelector('table');
+      const element2 = document.querySelector('main h1');
+      const element3 = document.querySelector('main');
+
+      const callback = ({target, currentTarget}) => {
+        alert(`Target: ${target.tagName}\nCurrent Target: ${currentTarget.tagName}`);
+      };
+            
+    </script>
+  </body>
+</html>
+
+<!-- 
+  LS Solution:
+  function delegateEvent(parentElement, selector, eventType, callback) {
+  if (parentElement && parentElement instanceof Element) {
+    return !parentElement.addEventListener(eventType, event => {
+      const validTargets = Array.prototype.slice.call(parentElement.querySelectorAll(selector));
+      if (validTargets.includes(event.target)) {
+        callback(event);
+      }
+    });
+  }
+}
+
+The solution is short, but a lot is happening:
+
+Line 2 ensures that parentElement contains a valid Element.
+Line 4 creates an array of DOM nodes that are descendants of parentElement that match the selector. Notice that we use parentElement to call querySelectorAll; this limits the nodes to descendants of parentElement. Furthermore, the handler determines the value of validTargets' every time the event occurs; this lets the code see new elements added to the DOM after the event listener gets attached to parentElement.
+Line 5 ensures that callback only executes the target element is one of the valid targets.
+ -->

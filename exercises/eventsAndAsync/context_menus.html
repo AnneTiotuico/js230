@@ -1,0 +1,81 @@
+<!-- 
+  Given the following markup, implement distinct context menus for the main and the sub areas of the web page. You can represent a context menu as an alert box that displays the name of the respective area (i.e., alert("sub")). Only one context menu should appear when the event occurs.
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <style>
+    main, #sub {
+      padding: 15px;
+    }
+    main {
+      width: 100%;
+      height: 200px;
+      background: blue;
+      color: white;
+    }
+
+    #sub {
+      position: relative;
+      top: 100px;
+      left: 15px;
+      background: red;
+      height: 50px;
+      width: 50%;
+    }
+  </style>
+  <title>Context Menu</title>
+</head>
+<body>
+  <main>
+    Main Area
+    <section id="sub">
+      Sub Area
+    </section>
+  </main>
+  <script>
+    // let main = document.querySelector('main');
+    // let sub = document.querySelector('#sub');
+    // main.addEventListener('contextmenu', (event) => {
+    //   event.preventDefault();
+    //   alert('main');
+    // });
+
+    // sub.addEventListener('contextmenu', (event) => {
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    //   alert('sub');
+    // });
+
+    let main = document.querySelector('main');
+    main.addEventListener('contextmenu', event => {
+      event.preventDefault();
+      if (event.target.id === 'sub') {
+        alert('sub')
+      } else {
+        alert('main')
+      }
+    });
+  </script>
+</body>
+</html>
+
+<!-- 
+  LS Solution:
+  const main = document.querySelector('main');
+  const sub = document.querySelector('#sub');
+
+  main.addEventListener('contextmenu', event => {
+    event.preventDefault();
+    alert('Main');
+  });
+
+  sub.addEventListener('contextmenu', event => {
+    event.preventDefault();
+    event.stopPropagation();
+    alert('Sub');
+  });
+
+  The key is to recognize that you have to prevent the default behavior for the contextmenu event and that you also have to stop propagation of the contextmenu event from the sub area. If you don't stop propagation from the sub area, the event will bubble up and the handler on the main element will fire and cause a second context menu — alert box in this case — to pop up.
+ -->

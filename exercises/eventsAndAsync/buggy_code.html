@@ -1,0 +1,41 @@
+<!-- 
+The code below is buggy. The person who created the code expects that nothing will happen when the user clicks on the image. This, however, isn't the case; clicking the image still brings the user to another web page.
+
+Study the code and explain the bug.
+ -->
+
+ <!DOCTYPE html>
+ <html lang="en">
+ <head>
+   <title>Buggy Code</title>
+   <style>
+     img {
+      display: block;
+      width: 15%;
+      margin-top: 10px;
+      cursor: auto;
+    }
+   </style>
+ </head>
+ <body>
+  <a href="https://www.launchschool.com">
+    Home
+    <img src="https://d24f1whwu8r3u4.cloudfront.net/assets/launch-logo-b6d01bd15ee9da31457ee3c315845718823aa8a741858be598ab35042a312348.svg" />
+  </a>
+
+  <script>
+    // document.querySelector('img').addEventListener('click', event => {
+    //   event.stopPropagation();
+    // }, false);
+    // The above still brings the user to another web page because stopPropagation() will just stop the event from continuing propagation in the capture and bubble phases, but won't stop the default behavior of that event
+    document.querySelector('img').addEventListener('click', event => {
+      event.preventDefault();
+    });
+   </script>
+ </body>
+ </html>
+
+ <!-- 
+   LS Solution:
+   The code uses event.stopPropagation instead of event.preventDefault. event.stopPropagation prevents subsequent listeners from firing, but it doesn't prevent the default behavior. Thus, when the user clicks the link, the browser executes the default action of trying to visit the named URL.
+  -->
