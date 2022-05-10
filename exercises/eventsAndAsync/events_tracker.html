@@ -93,25 +93,32 @@ tracker.list().length
       </div>
     </div>
     <script>
-      const tracker = {
-        callbackList: [],
-        list() {
-          return [...this.callbackList];
-        },
-        elements() {
-          return this.callbackList.map(callback => callback.target);
-        },
-        clear() {
-          this.callbackList = [];
-          return this.callbackList.length;
-        },
-      };
+      const tracker = (function(){
+        let callbackList = [];
+        
+        return {
+          list() {
+            return [...callbackList];
+          },
+          elements() {
+            return callbackList.map(callback => callback.target);
+          },
+          add(event) {
+            callbackList.push(event);
+          },
+          clear() {
+            callbackList = [];
+            return callbackList.length;
+          },
+        }
+      })();
 
       function track(callback) {
         return function(event) {
-          if (!tracker.callbackList.includes(event)) {
-            tracker.callbackList.push(event);
+          if (!tracker.list().includes(event)) {
+            tracker.add(event);
           }
+          
           event.stopPropagation();
           callback(event);
         };
