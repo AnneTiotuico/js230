@@ -109,12 +109,12 @@ tracker.list().length
 
       function track(callback) {
         return function(event) {
-          if (!Object.values(tracker.callbackList).includes(event)) {
+          if (!tracker.callbackList.includes(event)) {
             tracker.callbackList.push(event);
           }
           event.stopPropagation();
           callback(event);
-        }
+        };
       }
 
       const divRed = document.querySelector('#red');
