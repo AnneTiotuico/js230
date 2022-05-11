@@ -70,7 +70,6 @@ When the user clicks anywhere else on the page, the browser adds the highlight c
     </article>
   </main>
   <script>
-    const header = document.querySelector('header');
     const main = document.querySelector('main');
 
     const updateHighlight = (elem) => {
@@ -83,7 +82,7 @@ When the user clicks anywhere else on the page, the browser adds the highlight c
       if (elem.tagName === 'ARTICLE') {
         return elem;
       } else if (elem.href && elem.href.includes('article')) {
-        return document.querySelector(`#article-${elem.href.slice(-1)}`)
+        return document.querySelector(`${elem.hash}`); 
       } else {
         return getArticle(elem.parentElement);
       }
