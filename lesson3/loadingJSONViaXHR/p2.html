@@ -1,0 +1,51 @@
+<!-- 
+  Extend the code from the previous exercise to log the message 'The request could not be completed!' to the console when the request produces an error. You may replace the url in the previous exercise to "hts://api.github.com/repos/rails/rails" so that the error handler will be triggered.
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    let request = new XMLHttpRequest();
+    request.open('GET', 'hts://api.github.com/repos/rails/rails');
+    request.responseType = 'json';
+
+    request.addEventListener('load', event => {
+      let data = request.response;
+      console.log(`HTTP status code: ${request.status}`);
+      console.log(`Number of open issues: ${data.open_issues}`);
+    });
+
+    request.addEventListener('error', () => {
+      console.log('The request could not be completed!');
+    });
+
+    request.send();
+  </script>
+</body>
+</html>
+
+<!-- 
+  LS Solution:
+
+let request = new XMLHttpRequest();
+request.open('GET', 'htps://api.github.com/repos/rails/rails');
+
+request.addEventListener('load', event => {
+  let data = JSON.parse(request.response);
+  console.log(request.status);
+  console.log(data.open_issues);
+});
+
+request.addEventListener('error', event => {
+  console.log('The request could not be completed!');
+});
+
+request.send();
+
+ -->

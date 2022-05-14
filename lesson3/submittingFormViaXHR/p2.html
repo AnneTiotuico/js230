@@ -1,0 +1,87 @@
+<!-- 
+  The message, "You must be logged in to do that", tells us that the user must provide the proper authentication credentials; that is, they must prove they have the authority to update the product information. Without credentials, anybody in the world can change the product information. One way to authenticate is to provide a special header that contains an authentication token that only an authorized client should know. In a real application, the user would login to a site, which in turn would return a unique token, possible via a cookie. For now, we'll add the header manually with a simple (and insecure) string.
+
+  Modify the code you wrote in the previous exercise to add an Authorization header to the XMLHttpRequest before sending it. The header's value should be token AUTH_TOKEN.
+ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+  </style>
+</head>
+<body>
+  <h1>Existing Page</h1>
+
+  <div id="store"></div>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  let store = document.getElementById('store');
+  
+  let request = new XMLHttpRequest();
+  request.open('GET', 'https://ls-230-web-store-demo.herokuapp.com/products');
+
+  request.addEventListener('load', event => store.innerHTML = request.response);
+  request.send();
+  
+  store.addEventListener('click', event =>  {
+    let target = event.target;
+    if (target.tagName !== 'A') {
+      return;
+    }
+    
+    event.preventDefault();
+    
+    let request = new XMLHttpRequest();
+
+    request.open('GET', `https://ls-230-web-store-demo.herokuapp.com${target.getAttribute('href')}`);
+
+    request.addEventListener('load', event => store.innerHTML = request.response);
+    request.send();
+  });
+
+
+  store.addEventListener('submit', event =>  {
+    event.preventDefault();
+
+    let form = document.querySelector('form');
+    let data = new FormData(form);
+    let request = new XMLHttpRequest();
+    request.open('POST', `https://ls-230-web-store-demo.herokuapp.com${event.target.getAttribute('action')}`);
+    request.setRequestHeader('Authorization', 'token AUTH_TOKEN');	
+    request.addEventListener('load', () => store.innerHTML = request.response);
+    
+    request.send(data);
+  });
+});
+  </script>
+</body>
+</html>
+
+<!-- 
+  LS Solution:
+document.addEventListener('DOMContentLoaded', () => {
+  let store = document.getElementById('store');
+
+  ...
+
+  store.addEventListener('submit', event => {
+    let form = event.target;
+
+    event.preventDefault();
+    let request = new XMLHttpRequest();
+
+    let data = new FormData(form);
+
+    request.open('POST', `https://ls-230-web-store-demo.herokuapp.com${form.getAttribute('action')}`);
+    request.setRequestHeader('Authorization', 'token AUTH_TOKEN');
+
+    request.addEventListener('load', event => store.innerHTML = request.response);
+    request.send(data);
+  });
+});
+ -->

@@ -1,0 +1,45 @@
+<!-- 
+  Write some JavaScript code that loads JSON data from https://api.github.com/repos/rails/rails, parses the JSON into a JavaScript object, and then logs the HTTP status code and the number of open issues to the console. 
+
+  200
+  1159 // This should be whatever the current value is
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+    let request = new XMLHttpRequest();
+    request.open('GET', 'https://api.github.com/repos/rails/rails');
+    request.responseType = 'json';
+
+    request.addEventListener('load', event => {
+      let data = request.response;
+      console.log(`HTTP status code: ${request.status}`);
+      console.log(`Number of open issues: ${data.open_issues}`);
+    });
+
+    request.send();
+  </script>
+</body>
+</html>
+
+<!-- 
+  LS Solution:
+  
+  let request = new XMLHttpRequest();
+  request.open('GET', 'https://api.github.com/repos/rails/rails');
+
+  request.addEventListener('load', event => {
+    let data = JSON.parse(request.response);
+    console.log(request.status);
+    console.log(data.open_issues);
+  });
+
+  request.send();
+ -->
