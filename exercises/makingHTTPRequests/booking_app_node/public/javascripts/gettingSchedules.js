@@ -8,9 +8,6 @@ Finally, inform the user about the completion of the request regardless of the s
 Note: Server slow down for when there are more than 7 schedules to retrieve is manufactured only. For reference, the manufactured time is 7 seconds.
 */
 
-// const domain = 'http://localhost:3000/';
-console.log('hi testing')
-
 function countSchedules(data) {
   let tally = {};
   [...data].forEach(({staff_id}) => {
@@ -92,4 +89,12 @@ function retrieveSchedules() {
 
   request.send();
 }
+
+Discussion
+With regards to the XMLHttpRequest for retrieving the schedules there are two things to note. First, for the possible long wait time, you must set the timeout property of the request object. Next, you must have a listener for the loadend event. Recall that this listener will fire regardless if a timeout or load event occurs.
+
+The next thing is the tallying of schedules per staff. For this one, the solution uses two arrays: one to track the unique staff (via their IDs) and another to track the count of schedules for each staff. The solution then iterates over the schedules and checks, for every iteration, if the staff is already part of the staffs array. If it isn't, the staff is added to staffs and in the corresponding index position for the tally array, the value is set to 1. If the staff is part of the staffs array, the index of the staff is looked up and used to increment by 1 the corresponding element for the tally array.
+
+Further Exploration
+An alternative approach for getting the tally is to use the /schedules/:staff_id route. Rather than iteratively counting the schedule for each staff, you can just get the length of the value returned.
 */
