@@ -13,50 +13,6 @@ Implement the markup and JavaScript to view bookings made by students. The view 
       - create a nested li under the li that was clicked with the staffname, student email, time from the response
 */
 
-// const list = document.querySelector('ul');
-// let bookings;
-
-// function handleDateClick() {
-//   list.addEventListener('click', event => {
-//     event.preventDefault();
-//     let request = new XMLHttpRequest();
-//     let target = event.target;
-//     let parentEl = target.parentElement;
-
-//     if (parentEl.children.length <= 1) {
-//       request.open('GET', `http://localhost:3000/api/bookings/${target.innerText}`);
-//       request.responseText = 'json';
-      
-//       request.addEventListener('load', event => {
-//         let response = JSON.parse(request.response);
-    
-//         response.forEach(detail => {
-//           parentEl.insertAdjacentHTML('beforeend',`<ul><li>${detail.join(' | ')}</li></ul>`);
-//         });
-//       });
-//       request.send();
-//     }
-//   });
-// }
-
-// function getBookings() {
-//   let request = new XMLHttpRequest();
-//   request.open('GET', 'http://localhost:3000/api/bookings');
-
-//   request.addEventListener('load', event => {
-//     let bookings = request.response.match(/\d\d-\d\d-\d\d/g);
-//     let bookingEls = bookings.reduce((result, booking) => {
-//       return `${result}<li class="${booking}"><a href="#">${booking}</a></li>`
-//     }, '');
-//     list.innerHTML = bookingEls;
-//     handleDateClick();
-//   });
-  
-//   request.send();
-// }
-
-// getBookings();
-
 const list = document.querySelector('ul');
 let bookings;
 
@@ -69,10 +25,10 @@ function handleDateClick() {
 
     if (parentEl.children.length <= 1) {
       request.open('GET', `http://localhost:3000/api/bookings/${target.innerText}`);
-      request.responseText = 'json';
+      request.responseType = 'json'; 
       
       request.addEventListener('load', event => {
-        let response = JSON.parse(request.response);
+        let response = request.response;
     
         response.forEach(detail => {
           parentEl.insertAdjacentHTML('beforeend',`<ul class="details"><li>${detail.join(' | ')}</li></ul>`);
@@ -86,11 +42,11 @@ function handleDateClick() {
 function getBookings() {
   let request = new XMLHttpRequest();
   request.open('GET', 'http://localhost:3000/api/bookings');
+  request.responseType = 'json';
 
   request.addEventListener('load', event => {
-    let bookings = request.response.match(/\d\d-\d\d-\d\d/g);
-    let bookingEls = bookings.reduce((result, booking) => {
-      return `${result}<li class="${booking}"><a href="#">${booking}</a></li>`
+    let bookingEls = request.response.reduce((result, booking) => {
+      return `${result}<li class="${booking}"><a href="#">${booking}</a></li>`;
     }, '');
     list.innerHTML = bookingEls;
     handleDateClick();
