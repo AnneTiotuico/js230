@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.js" integrity="sha512-MQkEjxbZvzs4TX8ES4/tTIyaYdtDlJzVocnPo0GoysTR0jCmNg0P2is7uqpCoWxmoS9X84CDVzuWgZD/R/Q2oQ==" crossorigin="anonymous"></script>
+  <title>Handlebars Basics</title>
+</head>
+<body>
+  <script id="tag" type="text/x-handlebars">
+    <li>{{this}}</li>
+  </script>
+
+  <script id="posts" type="text/x-handlebars">
+    {{#each posts}}
+    <article>
+      <h1>{{title}}</h1>
+      <p><time>Posted on {{published}}</time></p>
+      {{{body}}}
+      {{#if tags}}
+      {{#each tags}}
+      {{> tag}}
+      {{/each}}
+      {{else}}
+      <p>Not tagged</p>
+      {{/if}}
+    </article>
+    {{/each}}
+  </script>
+
+  <!-- <script id="post" type="text/x-handlebars">
+    <article>
+      <h1>{{title}}</h1>
+      <p><time>Posted on {{published}}</time></p>
+      {{{body}}}
+      {{#if tags}}
+      {{#each tags}}
+      {{> tag}}
+      {{/each}}
+      {{else}}
+      <p>Not tagged</p>
+      {{/if}}
+    </article>
+  </script> -->
+
+  <script>
+    let post = {
+      title: 'Lorem ipsum dolor sit amet',
+      published: 'April 1, 2015',
+      body: 'Sed ut perspiciatis unde omnis iste <strong>natus error</strong> sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae <em>dicta sunt explicabo</em>. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.'
+    };
+
+    // let postTemplate = Handlebars.compile($('#post').html());
+    // Handlebars.registerPartial('postTemplate', $('#post').html());
+
+    let tagTemplate = Handlebars.compile($('#tag').html());
+    Handlebars.registerPartial('tag', $('#tag').html());
+
+    // $('body').append(postTemplate(post));
+
+    post.tags = ['JS', 'handlebars'];
+
+    let posts = [
+      post, 
+      {
+        title: 'Title',
+        published: 'May 23, 2022',
+        body: 'Asd sdlfkj sdlkjf asdfkj oeiur cmnvwoef alskdj.',
+      },
+    ];
+
+    let postsTemplate = Handlebars.compile($('#posts').html());
+    Handlebars.registerPartial('posts', $('#posts').html());
+    $('body').append(postsTemplate({ posts: posts }));
+  </script>
+</body>
+</html>
+
+<!-- 
+1. Locate the template by ID and compile it to a template function. Render the post to the body element using the function.
+
+let postTemplate = Handlebars.compile($('#post').html());
+let $body = $('body');
+
+Handlebars.registerPartial('postTemplate', $('#post').html());
+$body.append(postTemplate(post));
+
+LS Solution:
+// Using jQuery
+let postTemplate = Handlebars.compile($('#post').html());
+
+// Using JavaScript
+let postTemplate = Handlebars.compile(document.getElementById('post').innerHTML);
+
+$('body').append(postTemplate(post));
+
+2. Change your post object's body property to contain HTML elements as part of the string. Modify your Handlebars template to allow HTML to be output unescaped.
+
+let post = {
+  title: 'Lorem ipsum dolor sit amet',
+  published: 'April 1, 2015',
+  body: 'Sed ut perspiciatis unde omnis iste <strong>natus error</strong> sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae <em>dicta sunt explicabo</em>. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.'
+};
+
+<script id="post" type="text/x-handlebars">
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+  </article>
+</script>
+
+LS Solution:
+post.body = '<p>' + post.body + '</p>';
+
+<script id="post" type="text/x-handlebars">
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+  </article>
+</script>
+
+
+3. Add a property called tags on the post object that will be an array of strings to represent tags added to the blog post. Use the Handlebars each built-in helper to output all tags for the post.
+
+post.tags = [];
+
+<script id="post" type="text/x-handlebars">
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+    {{#each tags}}
+    <p>{{this}}</p>
+    {{/each}}
+  </article>
+</script>
+
+LS Solution:
+post.tags = ['Food', 'Cooking', 'Vegetables'];
+
+<script id="post" type="text/x-handlebars">
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+    <footer>
+      <p>
+        Tags:
+        {{#each tags}}
+        <strong>{{this}}</strong>
+        {{/each}}
+      </p>
+    </footer>
+  </article>
+</script>
+
+4. Create a separate template for the HTML element that wraps each tag. Using the handlebars partial method, register the template as a partial using the name "tag" and replace the HTML for tags in the main template with a reference to the partial.
+
+<script id="tag" type="text/x-handlebars">
+  <p>{{this}}</p>
+</script>
+
+<script id="post" type="text/x-handlebars">
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+    {{#each tags}}
+    {{> tag}}
+    {{/each}}
+  </article>
+</script>
+
+let tags = Handlebars.compile($('#tag').html());
+Handlebars.registerPartial('tag', $('#tag').html());
+
+LS Solution:
+<script id="tag" type="text/x-handlebars">
+  <strong>{{this}}</strong>
+</script>
+
+<script id="post" type="text/x-handlebars">
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+    <footer>
+      <p>
+        Tags:
+        {{#each tags}}
+        {{>tag}}
+        {{/each}}
+      </p>
+    </footer>
+  </article>
+</script>
+
+Handlebars.registerPartial('tag', $('#tag').html());
+
+
+5. Create a posts array, adding the existing post to it. Add a second post with no tags property. Modify your template to check for the existence of tags, and if none exist, output a "Not tagged" message. Wrap the template in an each loop to output each post.
+
+ let posts = [
+  post, 
+  {
+    title: 'Title',
+    published: 'May 23, 2022',
+    body: 'Asd sdlfkj sdlkjf asdfkj oeiur cmnvwoef alskdj.'
+  },
+];
+
+let postsTemplate = Handlebars.compile($('posts').html());
+
+$('body').append(postsTemplate({ posts: posts }));
+
+<script id="post" type="text/x-handlebars">
+  {{#each posts}}
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+    {{#if tags}}
+    {{#each tags}}
+    {{> tag}}
+    {{/each}}
+    {{else}}
+    <p>Not tagged</p>
+    {{/if}}
+  </article>
+  {{/each}}
+</script>
+
+LS Solution:
+let posts = [
+  {
+    title: 'voluptate velit',
+    published: 'April 2, 2015',
+    body: 'At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.'
+  }
+];
+posts.push(post);
+
+let postsTemplate = Handlebars.compile(document.getElementById('posts').innerHTML);
+
+$('body').append(postsTemplate({ posts: posts }));
+
+<script id="posts" type="text/x-handlebars">
+  {{#each posts}}
+  <article>
+    <h1>{{title}}</h1>
+    <p><time>Posted on {{published}}</time></p>
+    {{{body}}}
+    <footer>
+      <p>
+        {{#if tags}}
+        Tags:
+        {{#each tags}}
+        {{>tag}}
+        {{/each}}
+        {{else}}
+        Not tagged
+        {{/if}}
+      </p>
+    </footer>
+  </article>
+  {{/each}}
+</script>
+ -->
