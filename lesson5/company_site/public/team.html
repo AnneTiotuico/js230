@@ -85,37 +85,27 @@
     </footer>
   </body>
 
-  <!-- <script id="modalTemplate" type="text/x-handlebars">
-    <img src="../images/icon_close.png" id="close"/>
-    <img>
-    <h5>Name</h5>
-    <p>{{name}}</p>
-    <p>Paragraphs</p>
-  </script> -->
-
-
   <script>
     let memberData = {};
     let modalVis = false;
-    // let modalTemplate = Handlebars.compile($('#modalTemplate').html());
 
     $(function() {
       let modal = $('#modal')[0];
 
       function populateInfo(member) {
+        let memberItems = $('[data-team-member=' + member);
+        let name = memberItems.contents('img')[0].getAttribute('alt');
         $('#modal img')[1].setAttribute('src', `../images/img_${member.toLowerCase()}.jpg`);
-        $('#modal img')[1].setAttribute('alt', member);
-        $('#modal h3').text(member);
-        $('#modal p').text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
+        $('#modal img')[1].setAttribute('alt', name);
+        $('#modal h3').text(name);
+        $('#modal p').text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
       };
 
-      
       $('main a').click(function(e) {
         e.preventDefault();
         e.stopPropagation();
         let member = $(e.target).closest('a')[0].dataset.teamMember;
-        console.log(member)
-        populateInfo(member)
+        populateInfo(member);
         modal.style.display = "block";
         $('#layer')[0].style.display = "block";
         modalVis = true;
@@ -127,7 +117,7 @@
           $('#modal')[0].style.display = "none";
           $('#layer')[0].style.display = "none";
         }
-      })
+      });
     });
   </script>
 </html>
