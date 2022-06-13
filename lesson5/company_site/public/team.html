@@ -36,34 +36,34 @@
           <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniadolor</p>
           <ul>
             <li>
-              <a href="#" data-team-member="Kevin">
-                <img src="../images/img_kevin.jpg" alt="Kevin Wang" />
+              <a href="#" data-team-member="Kevin" data-text="Fusce feugiat ut nisi at pulvinar. Quisque sagittis augue sit amet hendrerit pellentesque. Maecenas pellentesque tincidunt commodo. Phasellus et justo pharetra, imperdiet dui eu, dapibus velit. Suspendisse finibus ante maximus bibendum rhoncus. Etiam sit amet faucibus urna. Nulla dui turpis, interdum non sodales quis, tempus quis mi. Aenean vel ante lacinia, laoreet arcu placerat, convallis justo. Aenean sit amet fringilla nisl. Phasellus vestibulum lorem et pretium aliquam.">
+                <img src="../images/img_kevin.jpg" alt="Kevin Wang"/>
                 Kevin
               </a>
             </li>
             <li>
-              <a href="#" data-team-member="Louis">
-                <img src="../images/img_louis.jpg" alt="Louis Burton" />
+              <a href="#" data-team-member="Louis" data-text="Ut cursus mauris at mauris scelerisque, id tempor ligula ullamcorper. Sed vehicula semper est, vitae aliquam diam finibus sit amet. Fusce ut dolor eu eros consequat varius. Mauris vitae iaculis ipsum. Mauris dictum convallis lacus eu elementum. Vivamus porttitor mattis turpis nec feugiat. Suspendisse tempus magna sit amet aliquet lobortis. Donec a tincidunt nisi.">
+                <img src="../images/img_louis.jpg" alt="Louis Burton"/>
                 Louis
               </a>
             </li>
             <li>
-              <a href="#" data-team-member="Kasper">
-                <img src="../images/img_kasper.jpg" alt="Kasper Salto" />
+              <a href="#" data-team-member="Kasper" data-text="Vestibulum rutrum porttitor aliquam. Mauris et rhoncus sem, in varius ligula. Duis velit justo, consectetur sit amet quam in, faucibus malesuada justo. Aliquam porttitor orci at posuere aliquet. Sed fringilla eros sit amet venenatis tempus. Phasellus posuere turpis vitae libero dignissim dictum. Donec id consectetur felis. Morbi augue massa, rutrum vulputate mauris nec, sodales varius libero.">
+                <img src="../images/img_kasper.jpg" alt="Kasper Salto"/>
                 Kasper
               </a>
             </li>
             <li>
-              <a href="#" data-team-member="Chris">
-                <img src="../images/img_chris.jpg" alt="Chris Lee" />
+              <a href="#" data-team-member="Chris" data-text="Pellentesque sit amet nulla ut nulla venenatis luctus. Pellentesque ut enim pellentesque, aliquet nunc ac, scelerisque massa. Nunc id sapien urna. Sed elementum turpis in tellus eleifend, quis auctor lorem hendrerit. Morbi cursus finibus molestie. Vivamus id ipsum arcu. Donec nec felis hendrerit orci porttitor sagittis vel et mi. Etiam id molestie felis.">
+                <img src="../images/img_chris.jpg" alt="Chris Lee"/>
                 Chris
               </a>
             </li>
           </ul>
         </article>
       </div>
-      <div id="layer"></div>
-      <div id="modal">
+      <div id="overlay" class="hidden"></div>
+      <div id="modal" class="hidden">
         <img src="../images/icon_close.png" alt="close" id="close"/>
         <img src="" alt="" id="member-pic"/>
         <h3></h3>
@@ -86,11 +86,9 @@
   </body>
 
   <script>
-    let memberData = {};
-    let modalVis = false;
-
     $(function() {
       let modal = $('#modal')[0];
+      let overlay = $('#overlay')[0];
 
       function populateInfo(member) {
         let memberItems = $('[data-team-member=' + member);
@@ -98,7 +96,7 @@
         $('#modal img')[1].setAttribute('src', `../images/img_${member.toLowerCase()}.jpg`);
         $('#modal img')[1].setAttribute('alt', name);
         $('#modal h3').text(name);
-        $('#modal p').text('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.');
+        $('#modal p').text(memberItems.attr('data-text'));
       };
 
       $('main a').click(function(e) {
@@ -106,28 +104,30 @@
         e.stopPropagation();
         let member = $(e.target).closest('a')[0].dataset.teamMember;
         populateInfo(member);
-        modal.style.display = "block";
-        $('#layer')[0].style.display = "block";
-        modalVis = true;
+        modal.classList.replace('hidden', 'visible');
+        overlay.classList.replace('hidden', 'visible');
       });
 
       $('body').click(function(e) {
         let target = e.target;
-        if (target.id === 'close' || (modalVis && $(target).closest(modal).length < 1)) {
-          $('#modal')[0].style.display = "none";
-          $('#layer')[0].style.display = "none";
+        if (target.id === 'close' || $(target).closest(modal).length < 1) {
+          modal.classList.replace('visible', 'hidden');
+          overlay.classList.replace('visible', 'hidden');
         }
       });
+
+      $(document).keyup(function(e) {
+        if (e.keyCode == 27) {
+          modal.classList.replace('visible', 'hidden');
+          overlay.classList.replace('visible', 'hidden');
+        }
+      });
+
     });
   </script>
 </html>
 
 <!-- 
-  LEFT OFF:
-  trying to create a handlebars template to populate the #modal div with the correct data
-
-  needed:
-- populate overlay information
-
-
+  things to add:
+  - modal should pop up relative to viewport
  -->
