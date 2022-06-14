@@ -1,0 +1,15 @@
+We decided to use jQuery for our solution, as a demonstration of the simplicity and flexibility that the jQuery API provides (which was one of the major reasons behind its popularity). We've taken advantage of jQuery method chaining to implement a solution in 15 lines of code.
+
+We updated the example.html file to add an active class to the first <li> element.
+
+In our slideshow.js file, we start off with the jQuery DOM ready function and pass it a callback. Within the callback we locate the #slideshow div, and then the <ul> element within it, assigning variables to both.
+
+We then attach a click event listener to the list, using a selector to filter it so that it only responds to clicks on the <a> elements.
+
+Within the handler, we find the parent <li> element for the anchor using the closest() method, and then use jQuery's index() method to determine an index for that <li> element in relation to its siblings.
+
+We then get all the <figure> elements, and use the stop() method to stop any currently running animations on the figures (this will prevent animations queueing if multiple thumbnails are clicked in rapid succession). We then filter the list of <figure> elements using jQuery's :visible pseudo-selector and animate its visibility using the fade() method.
+
+We then determine which <figure> to show by using the index value we obtained from the thumbnail (the indices of the thumbnails and figures should be equivalent). We use jQuery's eq() method to filter the <figure> elements using this index, and then use the fadeIn() method to animate its appearance.
+
+Finally we find the thumbnail which currently has the class of active and remove that class, before then adding it to the thumbnail that was clicked.
