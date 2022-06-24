@@ -1,0 +1,95 @@
+- initial state:
+  - tree has 6 apples
+  - word has x number of blanks to represent current word
+  - guesses is blank
+  - (no `Play another` link)
+
+- user starts guessing:
+  - if letter isn't in word
+    - add the letter to `Guesses` and remove 1 apple
+  - if letter is in word
+    - add letter to `Guesses` and dont' remove apple
+    - also fill in all the matching letters in the `Word`
+  - if letter is already guessed:
+    don't do anything
+
+- end game:
+  - user runs out of apples/guesses
+    - all apples should be gone from the tree
+    - background fades to red
+    - a message under the tree should read 'Sorry! You're out of guesses'
+    - a link below the message should read 'Play another'
+  - user guesses word before last apple is gone
+    - background fades to blue
+    - a message under tree should read 'You win!'
+    - a link below the message should read 'Play another'
+
+- user clicks 'Play another'
+  - background resets to original color
+  - tree resets to 6 apples
+  - 'Sorry...' message should be gone
+  - 'Play another' link should be gone
+  - `Word` is reset to new word with x number of blanks
+  - `Guesses` should be reset
+
+
+Model -
+- stores the word bank array
+- stores playeddWords array
+- stores currentWord
+- stores guessed letters array
+- stores number of incorrect guesses
+- stores number of incorrect guess limit 
+- methods that manipulate the data
+- method that generates the random word and removes that word from the word bank
+- method that resets all the variables above
+
+View -
+- method that grab HTML elements
+- method that created HTML elements?
+- methods that add event listeners to HTML elements
+  - methods that invokes the handler from Controller which calls Model methods that update data
+- method that displays the page w elements and updated data
+  - displays the change in number of apples
+  - displays the current word blanks
+    - displays the correct guessed letters
+  - displays all the guesses
+
+Controller -
+- in constructor:
+  - instantiate Model and View
+  - calls 'bind' methods from the View with Controller methods passed in as callbacks
+- method that calls the View method to update the display of the page using data from Model
+- methods that handle CRUD operations
+  - calls methods from Model to update data
+
+
+
+To start:
+- display initial page
+  - there should be 6 apples on the tree (this is already default)
+  - the `Play another` link should be hidden
+  - the Word spaces div should have X number of spans for the blank underline spaces
+    - get the length of the current word
+    - View method that creates the blank spaces
+  - the Guesses should be empty
+
+
+Display Page method:
+- takes word, guesses, incorrectGuesses, gameover
+- toggle the replay link based on gameover boolean
+- if 
+
+
+User guess
+- add keyup event listener
+- save the key value into a variable
+- check if key is included in the current word
+  - if yes:
+    - find the index of the matching letters in the word
+    - use the indexes to grab the blank spaces and insert the letter in `Word` to render on page
+    - add the guessed letter to `Guesses`
+  - if no:
+    - add the guessed letter to `Guesses`
+    - remove an apple (change id of div inside tree)
+
