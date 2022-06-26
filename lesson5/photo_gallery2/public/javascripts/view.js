@@ -1,36 +1,10 @@
-class Model {
-  constructor() {
-    this.domain = 'http://localhost:3000/';
-    this.photos;
-  }
-
-  async getPhotos() {
-    this.photos = await fetch(this.domain + 'photos')
-                            .then(res => res.json());
-  }
-
-  async getComments(id) {
-    this.comments = await fetch(this.domain + `comments?photo_id=${id}`)
-                              .then(res => res.json());
-  }
-
-  async updateLikesOrFaves(href, id) {
-    await fetch(href, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-      },
-      body: `photo_id=${id}`,
-    });
-  }
-}
-
 class View {
   constructor() {
     this.templates = {};
     this.slides = $('#slides');
     this.currentSlide; 
     this.header = $('header');
+    this.form = $('form');
     this.comments = $('#comments ul');
     this.compileTemplates();
     this.registerPartial($('#photo_comment')[0]);
@@ -66,13 +40,13 @@ class View {
     let slide = [...this.figures].filter(fig => {
       return $(fig).css('display') === 'block';
     })[0];
-    this.currentSlide = $(slide);
+    return $(slide);
   }
 
   prev(handler) {
     $('main').on('click', 'a.prev', e => {
       e.preventDefault();
-      this.getCurrentSlide();
+      this.currentSlide = this.getCurrentSlide();
       let nextSlide;
       if (this.currentSlide.prev().length < 1) {
         nextSlide = $(this.figures.slice(-1)[0]);
@@ -89,7 +63,7 @@ class View {
   next(handler) {
     $('main').on('click', 'a.next', e => {
       e.preventDefault();
-      this.getCurrentSlide();
+      this.currentSlide = this.getCurrentSlide();
       let nextSlide;
       if (this.currentSlide.next().length < 1) {
         nextSlide = $(this.figures[0]);
@@ -109,40 +83,18 @@ class View {
       handler(e.target.href, $(e.target).data('id'));
     })
   }
-}
 
-class Controller {
-  constructor(model, view) {
-    this.model = model;
-    this.view = view;
-
-    this.loadPage(1);
-    this.view.prev(this.handlePrev);
-    this.view.next(this.handleNext);
-    this.view.likeOrFave(this.handleLikeOrFave);
-  }
-
-  loadPage = async (id) => {
-    await this.model.getPhotos();
-    this.view.renderPhotos(this.model.photos);
-    let photo = this.model.photos[id - 1];
-    this.view.renderPhotoInfo(photo);
-    await this.model.getComments(photo.id);
-    this.view.renderComments(this.model.comments);
-  }
-
-  handlePrev = (id) => {
-    this.loadPage(id);
-  }
-
-  handleNext = (id) => {
-    this.loadPage(id);
-  }
-
-  handleLikeOrFave = (href, id) => {
-    this.model.updateLikesOrFaves(href, id);
-    this.loadPage(id);
+  postComment(handler) {
+    this.form.on('submit', e => {
+      e.preventDefault();
+      this.currentSlide = this.getCurrentSlide();
+      let photoId = this.currentSlide.data('id');
+      $('input[name="photo_id"').val(photoId)
+      handler(photoId, $(this.form).serialize());
+      this.form[0].reset();
+    })
   }
 }
 
-const app = new Controller(new Model(), new View());
+
+export default View;
