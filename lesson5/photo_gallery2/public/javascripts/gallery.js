@@ -13,6 +13,16 @@ class Model {
     this.comments = await fetch(this.domain + `comments?photo_id=${id}`)
                               .then(res => res.json());
   }
+
+  async updateLikesOrFaves(href, id) {
+    await fetch(href, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+      },
+      body: `photo_id=${id}`,
+    });
+  }
 }
 
 class View {
@@ -92,6 +102,13 @@ class View {
       handler(nextSlide.data('id'));
     });
   }
+
+  likeOrFave(handler) {
+    this.header.on('click', 'a', e => {
+      e.preventDefault();
+      handler(e.target.href, $(e.target).data('id'));
+    })
+  }
 }
 
 class Controller {
@@ -102,6 +119,7 @@ class Controller {
     this.loadPage(1);
     this.view.prev(this.handlePrev);
     this.view.next(this.handleNext);
+    this.view.likeOrFave(this.handleLikeOrFave);
   }
 
   loadPage = async (id) => {
@@ -118,6 +136,11 @@ class Controller {
   }
 
   handleNext = (id) => {
+    this.loadPage(id);
+  }
+
+  handleLikeOrFave = (href, id) => {
+    this.model.updateLikesOrFaves(href, id);
     this.loadPage(id);
   }
 }

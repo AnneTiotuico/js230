@@ -1,0 +1,23 @@
+
+attach event listener to prev & next anchors
+- get the current photo
+- fade out current photo
+- fade in new photo at the same time
+-
+
+Model
+- 
+
+View
+- get the current slide fade it out
+- get new slide fade it in
+
+
+Controller
+
+
+previous:
+- get previous sibling by using $(current).prev()
+  - set it to newSlide
+- if it returns empty object
+  - set newSlide to the last slide
